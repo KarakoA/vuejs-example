@@ -45,6 +45,7 @@
           <td><strong>Statistics&nbsp;</strong></td>
           <td><span class="badge badge-success">Right</span></td>
           <td><span class="badge badge-danger">Wrong</span></td>
+          <td><span class="badge badge-info">Accuracy</span></td>
         </tr>
         <tr>
           <td />
@@ -53,6 +54,9 @@
           </td>
           <td>
             <span> {{ count_wrong }}</span>
+          </td>
+          <td>
+            <span> {{ accuracy }}</span>
           </td>
         </tr>
       </table>
@@ -76,6 +80,12 @@ export default {
       count_right: 0,
       count_wrong: 0,
     };
+  },
+  computed: {
+    accuracy: function() {
+      let n = this.count_wrong + this.count_right;
+      return n == 0 ? 0 : this.count_right / n;
+    },
   },
   created: function() {
     this.add_problem();

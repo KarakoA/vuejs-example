@@ -1,43 +1,47 @@
 <template>
   <div>
-    <div style="margin-left: 5px; margin-top: 20px;">
-      <form @submit.prevent>
-        <span>{{ a }}</span> + <span> {{ b }}</span> =
-        <span><input class="question" v-model="answer"/></span>
-        <button
-          class="btn btn-primary"
-          style="margin-left: 5px"
-          :disabled="!may_check()"
-          type="submit"
-          @click="check_answer"
-        >
-          Check
-        </button>
-        <button
-          class="btn btn-success"
-          style="margin-left: 5px"
-          disabled="1"
-          v-if="right === true"
-        >
-          Right
-        </button>
-        <button
-          class="btn btn-danger"
-          style="margin-left: 5px"
-          disabled="1"
-          v-if="right === false"
-        >
-          Wrong
-        </button>
-        <button
-          class="btn btn-info"
-          style="margin-left: 5px"
-          @click="new_problem"
-        >
-          New Problem
-        </button>
-      </form>
-    </div>
+    <ul>
+      <li v-for="problem in problems" :key="problem.id">
+        <div style="margin-left: 5px; margin-top: 20px;">
+          <form @submit.prevent>
+            <span>{{ problem.a }}</span> + <span> {{ problem.b }}</span> =
+            <span><input class="question" v-model="problem.answer"/></span>
+            <button
+              class="btn btn-primary"
+              style="margin-left: 5px"
+              :disabled="!may_check(problem)"
+              type="submit"
+              @click="check_answer(problem)"
+            >
+              Check
+            </button>
+            <button
+              class="btn btn-success"
+              style="margin-left: 5px"
+              disabled="1"
+              v-if="problem.right === true"
+            >
+              Right
+            </button>
+            <button
+              class="btn btn-danger"
+              style="margin-left: 5px"
+              disabled="1"
+              v-if="problem.right === false"
+            >
+              Wrong
+            </button>
+            <button
+              class="btn btn-info"
+              style="margin-left: 5px"
+              @click="new_problem"
+            >
+              New Problem
+            </button>
+          </form>
+        </div>
+      </li>
+    </ul>
     <hr />
     <div style="margin-left: 5px">
       <table>
@@ -72,11 +76,7 @@ export default {
   },
   data() {
     return {
-      a: 0,
-      b: 0,
-      c: 0,
-      answer: undefined,
-      right: undefined,
+      problems: [],
       count_right: 0,
       count_wrong: 0,
     };
@@ -93,22 +93,23 @@ export default {
   methods: {
     add_problem() {
       let max = 100;
-      this.c = Math.floor(Math.random() * (max - 1)) + 1;
-      this.a = Math.floor(Math.random() * (this.c - 2)) + 1;
-      this.b = this.c - this.a;
 
-      this.answer = undefined;
-      this.right = undefined;
+      let c = Math.floor(Math.random() * (max - 1)) + 1;
+      let a = Math.floor(Math.random() * (c - 2)) + 1;
+      let b = c - a;
+      let id = this.problems.length + 1;
+      let problem = { c, a, b, id, answer: undefined, right: undefined };
+      this.problems.push(problem);
     },
-    check_answer() {
-      this.right = this.c === parseInt(this.answer);
-      this.right ? (this.count_right += 1) : (this.count_wrong += 1);
+    check_answer(problem) {
+      problem.right = problem.c === parseInt(problem.answer);
+      problem.right ? (this.count_right += 1) : (this.count_wrong += 1);
     },
-    may_check() {
+    may_check(problem) {
       // answer non-empty and right undefined
       return (
-        !(this.answer === undefined || this.answer === "") &&
-        this.right === undefined
+        !(problem.answer === undefined || problem.answer === "") &&
+        problem.right === undefined
       );
     },
     new_problem() {
